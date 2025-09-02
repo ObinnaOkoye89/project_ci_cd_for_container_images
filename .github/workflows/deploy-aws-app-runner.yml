@@ -18,8 +18,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  IMAGE_NAME_LC: ${{ github.repository_owner }}/$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')
-
+  
 jobs:
   build:
     environment:
@@ -46,8 +45,8 @@ jobs:
         if: ${{ inputs.environment }} == 'Staging'
         id: push
         run: |
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}:main
-          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LC }}:main ${{ secrets.AWS_ACCOUNT_NUMBER }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ github.event.repository.name }}
+          docker pull ${{ env.REGISTRY }}/$(echo "${{ env.IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]'):main
+          docker tag ${{ env.REGISTRY }}/$(echo "${{ env.IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]'):main ${{ secrets.AWS_ACCOUNT_NUMBER }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ github.event.repository.name }}
           docker push ${{ secrets.AWS_ACCOUNT_NUMBER }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/${{ github.event.repository.name }}
 
       - name: Deploy production with aws CLI
